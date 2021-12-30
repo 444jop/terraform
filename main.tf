@@ -91,12 +91,53 @@ resource "ncloud_subnet" "prisub2" {
   name           = "pri2-subnet"
   usage_type     = "GEN"
 }
+## route table ##
+resource "ncloud_route_table" "fe_pub_rt" {
+  vpc_no = ncloud_vpc.fe.id
+  supported_subnet_type = "PUBLIC"
+  name = "fe-pub-rt"
+}
+resource "ncloud_route_table" "be_pri_rt" {
+  vpc_no = ncloud_vpc.be.id
+  supported_subnet_type = "PRIVATE"
+  name = "be-pri-rt" 
+}
+resource "ncloud_route_table" "mgmt_pri_rt" {
+  vpc_no = ncloud_vpc.mgmt.id
+  supported_subnet_type = "PRIVATE"
+  name = "mgmt-pri-rt"
+}
+
+## route table - subnet association ##
+resource "ncloud_route_table_association" "fe_rt_sub" {
+  route_table_no = ncloud_route_table.fe_pub_rt.id
+  subnet_no = ncloud_subnet.pubsub.id  
+}
+
+resource "ncloud_route_table_association" "be_rt_sub" {
+  route_table_no = ncloud_route_table.be_pri_rt.id
+  subnet_no = ncloud_subnet.prisub.id
+}
+
+resource "ncloud_route_table_association" "mgmt_rt_sub" {
+  route_table_no = ncloud_route_table.mgmt_pri_rt.id
+  subnet_no = ncloud_subnet.prisub2.id
+}
 
 ## NAT Gateway ##
 resource "ncloud_nat_gateway" "nat_gateway" {
   vpc_no = ncloud_vpc.be.id
   zone   = "KR-2"
   name   = "nat-gw"
+}
+
+## NAT Gateway - subnet 연동 ##
+resource "ncloud_route" "natroute" {
+  route_table_no = ncloud_route_table.be_pri_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  target_type = "NATGW"
+  target_name = ncloud_nat_gateway.nat_gateway.name
+  target_no = ncloud_nat_gateway.nat_gateway.id
 }
 
 ## VPC Peering ##
