@@ -131,13 +131,61 @@ resource "ncloud_nat_gateway" "nat_gateway" {
   name   = "nat-gw"
 }
 
-## NAT Gateway - subnet 연동 ##
+## Route ##
 resource "ncloud_route" "natroute" {
   route_table_no = ncloud_route_table.be_pri_rt.id
   destination_cidr_block = "0.0.0.0/0"
   target_type = "NATGW"
   target_name = ncloud_nat_gateway.nat_gateway.name
   target_no = ncloud_nat_gateway.nat_gateway.id
+}
+
+## vpc peering 라우팅 필요
+resource "ncloud_route" "peering_route" {
+  route_table_no = ncloud_route_table.fe_pub_rt.id
+  destination_cidr_block = "10.1.0.0/16"
+  target_type = "VPCPEERING"
+  target_name = ncloud_vpc_peering.peering.name
+  target_no = ncloud_vpc_peering.peering.id
+}
+
+resource "ncloud_route" "peering2_route" {
+  route_table_no = ncloud_route_table.be_pri_rt.id
+  destination_cidr_block = "10.0.0.0/16"
+  target_type = "VPCPEERING"
+  target_name = ncloud_vpc_peering.peering2.name
+  target_no = ncloud_vpc_peering.peering2.id
+}
+resource "ncloud_route" "peering3_route" {
+  route_table_no = ncloud_route_table.be_pri_rt.id
+  destination_cidr_block = "10.2.0.0/16"
+  target_type = "VPCPEERING"
+  target_name = ncloud_vpc_peering.peering3.name
+  target_no = ncloud_vpc_peering.peering3.id
+}
+
+resource "ncloud_route" "peering4_route" {
+  route_table_no = ncloud_route_table.mgmt_pri_rt.id
+  destination_cidr_block = "10.1.0.0/16"
+  target_type = "VPCPEERING"
+  target_name = ncloud_vpc_peering.peering4.name
+  target_no = ncloud_vpc_peering.peering4.id
+}
+
+resource "ncloud_route" "peering5_route" {
+  route_table_no = ncloud_route_table.fe_pub_rt.id
+  destination_cidr_block = "10.2.0.0/16"
+  target_type = "VPCPEERING"
+  target_name = ncloud_vpc_peering.peering5.name
+  target_no = ncloud_vpc_peering.peering5.id
+}
+
+resource "ncloud_route" "peering6_route" {
+  route_table_no = ncloud_route_table.mgmt_pri_rt.id
+  destination_cidr_block = "10.0.0.0/16"
+  target_type = "VPCPEERING"
+  target_name = ncloud_vpc_peering.peering6.name
+  target_no = ncloud_vpc_peering.peering6.id
 }
 
 ## VPC Peering ##
