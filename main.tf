@@ -219,3 +219,14 @@ resource "ncloud_vpc_peering" "peering6" {
   source_vpc_no = ncloud_vpc.mgmt.id
   target_vpc_no = ncloud_vpc.fe.id
 }
+
+## server ##
+# ubuntu 서버 이미지 리스트 #
+data "ncloud_server_images" "server_images" {
+    filter {
+      name = "product_name"
+      values = ["ubuntu"]
+      regex = true
+    }
+  output_file = "ubuntu_server_image_list.json"
+}
