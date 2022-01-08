@@ -26,7 +26,7 @@ data "ncloud_server_images" "server_images" {
   #   values = ["ubuntu"]
   #   regex  = true
   # }
-  output_file = "ubuntu_server_image_list.json"
+  output_file = "server_image_list.json"
 }
 
 data "ncloud_server_product" "product" {
