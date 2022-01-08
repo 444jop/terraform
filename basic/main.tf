@@ -21,11 +21,11 @@ module "network" {
 ## server ##
 # ubuntu 서버 이미지 리스트 #
 data "ncloud_server_images" "server_images" {
-  filter {
-    name   = "product_name"
-    values = ["ubuntu"]
-    regex  = true
-  }
+  # filter {
+  #   name   = "product_name"
+  #   values = ["ubuntu"]
+  #   regex  = true
+  # }
   output_file = "ubuntu_server_image_list.json"
 }
 
